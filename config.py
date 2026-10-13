@@ -1,0 +1,166 @@
+def get_default_slots():
+    default_slots = {
+        "specify": {"food": [], "pricerange": [], "name": [], "area": []},
+        "user_question": None,
+        "inform": [],
+        "answer": None,
+        "surprise_me": False,
+        "greeting": "",
+        "goodbye": False,
+        "goodbye_stage": 0,
+        "dont_like_choice": False,
+        "confirm_goodbye": False,
+        "alternative_result": False,
+        "is_new_negated": False,
+        "any_new_negation_is_wildcard": False,
+        "is_new_dont_care": False,
+        "new_slot_select": False,
+        "all_combinations": [],
+        "intent": None,
+        "user_prompt": None,
+        "n_failures": 0,
+    }
+    return default_slots
+
+
+REQUIRED_SLOTS = ["food", "area", "pricerange"]
+ALL_SLOTS = REQUIRED_SLOTS + ["name"]
+
+# this stores how many options should be obtained depending on the slot
+NLU_RETURN_TOP_N_OPTIONS = {"pricerange": 2, "food": 4, "area": 4, "name": 3}
+
+NEXT_BEST_OPTIONS = {
+    "pricerange": {
+        "cheap": [("moderate", 0.8), ("expensive", 0.6)],
+        "moderate": [("cheap", 0.8), ("expensive", 0.8)],
+        "expensive": [("moderate", 0.8), ("cheap", 0.6)],
+    },
+    "area": {
+        "centre": [
+            ("north", 0.8),
+            ("east", 0.8),
+            ("south", 0.8),
+            ("west", 0.8),
+            ("*", 0.8),
+        ],
+        "north": [("centre", 0.8), ("east", 0.75), ("west", 0.75), ("south", 0.6)],
+        "west": [("centre", 0.8), ("north", 0.75), ("south", 0.75), ("east", 0.6)],
+        "south": [("centre", 0.8), ("east", 0.75), ("west", 0.75), ("north", 0.6)],
+        "east": [("centre", 0.8), ("north", 0.75), ("south", 0.75), ("west", 0.6)],
+    },
+}
+
+OPPOSITE_CHOICE = {
+    "pricerange": {"cheap": "expensive", "expensive": "cheap"},
+    "area": {"north": "south", "east": "west", "south": "north", "west": "east"},
+}
+CONFIDENCE_DROPOUT_THRESHOLD = {
+    "food": 0.15,
+    "pricerange": 0.15,
+    "name": 0.4,
+    "area": 0.15,
+}
+
+POSSIBLE_USER_QUESTIONS = {
+    "WHAT_PRICERANGE": [  # the user wants to know what a pricerange is
+        "What price ranges are available?",
+        "What are the available price ranges?",
+        "What options do you have in terms of pricing?",
+        "What kinds of price ranges do you offer?",
+        "What kind of pricing options are available?",
+        "what are possible price ranges?",
+        "what is a price range?",
+        "which price ranges are there?",
+        "What price ranges do you have?",
+        "what are my possible choices for pricerange?",
+        "how much does it cost to eat out?",
+        "what kind of price levels do you support?",
+        "I would like to know how expensive the restaurant could be?",
+        "Tell me about the price categories",
+        "what do you mean by price range?",
+    ],
+    "WHAT_AREA": [  # the user wants to know th areas the system knows
+        "What areas are available?",
+        "What city areas can I choose from?",
+        "What are the areas?",
+        "What areas are there?",
+        "What areas do you have?",
+        "Which areas does cambridge have?",
+        "What different areas can I explore?",
+        "In what areas can i eat?",
+        "What areas are there in the city?",
+        "Where can I find restaurants?",
+        "What parts of town do you cover?",
+        "Which neighborhoods are included?",
+        "What locations are available?",
+        "Can you show me the supported areas?",
+    ],
+    "WHAT_FOOD": [  # the user wants to know what foodtypes there are.
+        "Which foodtypes are available?",
+        "What cuisines are available?",
+        "What food varieties do you have?",
+        "What food options are available?",
+        "Which types of food are there?",
+        "What types of food do you offer?",
+        "Which foo types are there?",
+        "What are valid values for foodtype?",
+        "What kinds of food are there?",
+        "Which foodtypes could i have?",
+        "What cuisines do you have?",
+        "What food options do you offer?",
+        "Tell me the available food styles",
+        "What kind of meals can I get?",
+        "What are the food categories?",
+    ],
+    "WHAT_CAN_YOU_DO": [  # the user want to know basic function and the goal of system
+        "What can this bot do for me?",
+        "What can you do?",
+        "How can you help me?",
+        "What can you help me with?",
+        "what do you know?",
+        "What is this system for?",
+        "What kind of information can you give me?",
+        "What is the purpose of this bot?",
+    ],
+    "HOW_TO_USE": [
+        "How should I use this bot?",
+        "How do I interact with this bot?",
+        "What should I do to make the bot understand me better?",
+        "How do I get started with this bot?",
+        "How does this bot work?",
+        "Can you guide me through the steps to find a restaurant?",
+        "How should I talk to you?",
+        "How do I tell you want I want?",
+        "What's the process for finding a restaurant?",
+        "Should I type in a certain way for the bot to respond correctly?",
+    ],
+    "OUT_OF_SCOPE": [  # if the user ask some questions out of scope, the system should also react and tell user it it out of scope
+        "I would like to order food.",
+        "I want to order food.",
+        "Can I order food?",
+        "Can you help me to reserve a place?",
+        "Can you help me to reserve?",
+        "Please reserve a table for me.",
+        "Can you send me the link of the restaurant?",
+        "Could you send me the restaurant's link?",
+        "Can you give the website of the restaurant?",
+        "Could you provide the restaurant's website?",
+        "Do you have GPS navigation?",
+        "Can you provide GPS directions?",
+        "Can you find my current location?",
+        "Could you determine where I am?",
+        "How can I order food?",
+        "What's the average cost per person at this restaurant?",
+        "Tell me a joke",
+        "What's the weather?",
+        "Can you order food for me?",
+        "Who won the football game?",
+        "Play music",
+        "How's your day?",
+    ],
+    "RESTAURANT_NUMBER": [  # "How many restaurants are there to choose from?"
+        "How many restaurants are there to choose from?",
+        "How many restaurants can you recommend?",
+        "How many restaurants do you have in your database?",
+    ],
+}

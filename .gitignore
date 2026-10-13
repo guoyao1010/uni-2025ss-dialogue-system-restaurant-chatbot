@@ -1,0 +1,42 @@
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+.env/
+
+# macOS and IDE settings
+.DS_Store
+.vscode/
+.idea/
+*.iml
+
+# Local credentials; keep a sanitized example publishable
+.env
+.env.*
+!.env.example
+credentials.json
+secrets.json
+
+# Development notebooks and local training outputs
+/test.ipynb
+/testnlg.ipynb
+/tmp.ipynb
+/unittests_notebook.ipynb
+.ipynb_checkpoints/
+ner-finetuned*/
+*.bio
+/annotations.json
+/CamRest676.json
+
+# Temporary files and logs
+*.log
+*.tmp
+*.bak
+*.swp
+*~

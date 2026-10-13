@@ -1,0 +1,14 @@
+ipykernel
+datasets
+transformers
+torch
+accelerate>=0.26.0
+einops
+hf_xet
+sentence-transformers
+pylate
+tiktoken
+protobuf 
+blobfile
+sentencepiece
+numpy
